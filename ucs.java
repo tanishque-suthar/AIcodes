@@ -1,23 +1,17 @@
 import java.util.*;
 
 public class ucs {
-    static class Node implements Comparable<Node> {
-        int vertex;
-        int cost;
+    static class Node {
+        int id, g;
 
         public Node(int vertex, int cost) {
-            this.vertex = vertex;
-            this.cost = cost;
-        }
-
-        @Override
-        public int compareTo(Node other) {
-            return Integer.compare(this.cost, other.cost);
+            this.id = vertex;
+            this.g = cost;
         }
     }
 
     public static void uniformCostSearch(int[][] graph, int start, int goal, int n) {
-        PriorityQueue<Node> pq = new PriorityQueue<>();
+        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparingInt(node -> node.g));
         boolean[] visited = new boolean[n];
         int[] costs = new int[n];
         int[] parent = new int[n];
@@ -30,7 +24,7 @@ public class ucs {
 
         while (!pq.isEmpty()) {
             Node current = pq.poll();
-            int vertex = current.vertex;
+            int vertex = current.id;
 
             if (vertex == goal)// If goal is reached, break the loop
                 break;
@@ -39,7 +33,6 @@ public class ucs {
 
             visited[vertex] = true;
 
-            // Explore all neighbors
             for (int i = 0; i < n; i++) {
                 if (graph[vertex][i] > 0 && !visited[i]) { // If there is an edge and not visited
                     int newCost = costs[vertex] + graph[vertex][i];
@@ -81,12 +74,12 @@ public class ucs {
         System.out.print("Enter number of vertices: ");
         int n = sc.nextInt();
 
-        int[][] graph = new int[n][n];
+        int[][] adjacencyMatrix = new int[n][n];
 
         System.out.println("Enter the adjacency matrix (enter 0 for no edge):");
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                graph[i][j] = sc.nextInt();
+                adjacencyMatrix[i][j] = sc.nextInt();
             }
         }
         System.out.print("Enter start vertex: ");
@@ -94,7 +87,7 @@ public class ucs {
         System.out.print("Enter goal vertex: ");
         int goal = sc.nextInt();
 
-        uniformCostSearch(graph, start, goal, n);
+        uniformCostSearch(adjacencyMatrix, start, goal, n);
         sc.close();
     }
 }
