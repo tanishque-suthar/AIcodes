@@ -102,26 +102,33 @@ public class genetic {
     private static ArrayList<int[]> selection() {
         ArrayList<int[]> selectedChromosomes = new ArrayList<>();
 
-        // Create a map of chromosome indices to fitness scores
-        Map<Integer, Double> indexToFitness = new HashMap<>();
-        for (int i = 0; i < population.size(); i++) {
-            indexToFitness.put(i, fitnessScores.get(i));
-        }
+        // Create a copy of population and fitnessScores to sort
+        ArrayList<int[]> sortedPopulation = new ArrayList<>(population);
+        ArrayList<Double> sortedFitness = new ArrayList<>(fitnessScores);
 
-        // Sort by fitness scores in descending order
-        List<Map.Entry<Integer, Double>> sortedEntries = new ArrayList<>(indexToFitness.entrySet());
-        sortedEntries.sort((e1, e2) -> e2.getValue().compareTo(e1.getValue()));
-        // same as the following:
-        // Comparator<Map.Entry<Integer, Double>> comparator = (e1, e2) ->
-        // e2.getValue().compareTo(e1.getValue());
-        // sortedEntries.sort(comparator);
+        // Bubble sort both arrays based on fitness (in descending order)
+        for (int i = 0; i < populationSize - 1; i++) {
+            for (int j = 0; j < populationSize - i - 1; j++) {
+                if (sortedFitness.get(j) < sortedFitness.get(j + 1)) {
+                    // Swap fitness scores
+                    Double tempFitness = sortedFitness.get(j);
+                    sortedFitness.set(j, sortedFitness.get(j + 1));
+                    sortedFitness.set(j + 1, tempFitness);
+
+                    // Swap chromosomes
+                    int[] tempChromosome = sortedPopulation.get(j);
+                    sortedPopulation.set(j, sortedPopulation.get(j + 1));
+                    sortedPopulation.set(j + 1, tempChromosome);
+                }
+            }
+        }
 
         // Select top percentage
         int selectCount = (int) (populationSize * selectionPercentage);
         for (int i = 0; i < selectCount; i++) {
-            int chromosomeIndex = sortedEntries.get(i).getKey();
-            selectedChromosomes.add(population.get(chromosomeIndex));
+            selectedChromosomes.add(sortedPopulation.get(i));
         }
+
         return selectedChromosomes;
     }
 
